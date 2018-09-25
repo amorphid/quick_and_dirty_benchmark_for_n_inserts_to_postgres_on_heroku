@@ -27,3 +27,5 @@ Setup:
     $ heroku config:set POOL_SIZE=118 
     $ SECRET_KEY_BASE="$(mix phx.gen.secret)"
     $ heroku config:set SECRET_KEY_BASE="${SECRET_KEY_BASE}"
+    $ heroku run "POOL_SIZE=2 mix.ecto migrate"
+    $ heroku run "POOL_SIZE=2 iex -S mix"
