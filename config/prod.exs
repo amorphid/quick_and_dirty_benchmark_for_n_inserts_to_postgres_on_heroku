@@ -15,4 +15,9 @@ config :pg_bm, PgBm.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
+  fn num,num2 -> datetime = DateTime.utc_now() ; qd_bm = fn i -> 1..i |> Enum.reduce([], fn _, acc -> [[quantity: 123, price: 123, inserted_at: datetime, updated_at: datetime]|acc] end) end ; :timer.tc(fn -> Enum.map(1..num, fn _ -> Task.async(fn -> PgBm.Repo.transaction(fn -> PgBm.Repo.insert_all(PgBm.Buy, qd_bm.(num2)) end) end) end) |> Enum.map(fn i -> Task.await(i, 60_000) end) end) |> elem(0) |> case do microsec -> IO.puts("#{(num2 * num) / (microsec / 1_000_000) |> trunc()} inserts per second") end end.(1000,100)
+
+
+  Enum.map(1..2, fn _ -> Task.async(fn -> Postgrex.query!(pid, "INSERT INTO buys (price, quantity, inserted_at, updated_at) VALUES (123, 123, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)", []) end) end)
+
   
